@@ -32,7 +32,7 @@ export default class App extends Component<Props> {
       <Image source={{
         isStatic: true,
         uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
-        style={{height: 100, width:100}} testID='image-preview' />
+        style={{flex: 1, width: '100%' }} testID='image-preview' />
   );
 
   showCamera = () => (
@@ -43,9 +43,8 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         {this.state.image ? this.showImage() : this.showCamera()}
-        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} testID='take-picture-button'>
-            <Text style={{ fontSize: 14 }}> SNAP </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -58,15 +57,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#000',
   },
   capture: {
     flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
+    backgroundColor: '#cdcdcd',
+    borderRadius: 90,
+    borderStyle: 'solid',
+    borderWidth: 5,
+    borderColor: '#fff',
     padding: 15,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     alignSelf: 'center',
-    margin: 20,
+    margin: 10,
   },
 });
