@@ -13,6 +13,7 @@ import { RNCamera } from 'react-native-camera';
 
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
 //const myIcon = <Icon name="rocket" size={30} color="#900" />;
 
 
@@ -20,8 +21,10 @@ type Props = {};
 export default class App extends Component<Props> {
 
   state = {
-    image: null
+    image: null,
+    sending: false
   }
+
   takePicture = async() => {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
@@ -47,6 +50,7 @@ export default class App extends Component<Props> {
   }
 
   sendPicture = async() => {
+    this.setState({ sending: true });
   }
 
 
@@ -54,6 +58,12 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         {this.state.image ? this.showImage() : this.showCamera()}
+        {this.state.sending ?
+          <View style={styles.overlay} testID='sending-message-overlay'>
+            <Text>HELLLOOOOO</Text>
+            <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+          </View> : null 
+        }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           { this.state.image ? 
             <View style={{flex: 0, flexDirection: 'row'}}>
@@ -90,5 +100,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignSelf: 'center',
     margin: 10,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'red',
+    opacity: 0.3
   },
 });
