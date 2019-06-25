@@ -85,40 +85,43 @@ describe('Example', () => {
         await waitFor(element(by.id('image-preview'))).toBeVisible()
       }));
 
-      it('displays sending-message-modal', mochaAsync(async () => {
-        nock('https://example.com')
-          .log(console.log)
-          .post('/receipt')      
-          .reply(200);
+      describe('successful send', () => {
 
-        await expect(element(by.id('sending-message-overlay'))).toBeNotVisible();
-        await element(by.id('send-button')).tap();
-        await waitFor(element(by.id('sending-message-overlay'))).toBeVisible();
-      }));
+        it('displays sending-message-modal', mochaAsync(async () => {
+          await expect(element(by.id('sending-message-overlay'))).toBeNotVisible();
+          await element(by.id('send-button')).tap();
+          await waitFor(element(by.id('sending-message-overlay'))).toBeVisible();
+        }));
+  
+        it('sends a POST to the designated API endpoint and returns to camera screen', mochaAsync(async () => {
+          await expect(element(by.id('image-preview'))).toBeVisible();
+          await expect(element(by.id('camera'))).toBeNotVisible();
+          await element(by.id('send-button')).tap();
+          await expect(element(by.id('image-preview'))).toBeNotVisible();
+          await expect(element(by.id('camera'))).toBeVisible();
+        }));
+  
+        it('shows a flash message on successful image submission', mochaAsync(async () => {
+          await expect(element(by.text('Image sent'))).toBeNotVisible();
+          await element(by.id('send-button')).tap()
+          await expect(element(by.text('Image sent'))).toBeVisible();
+        }));
+      });
 
-      it('sends a POST to the designated API endpoint and returns to camera screen', mochaAsync(async () => {
-        nock('https://example.com')
-          .log(console.log)
-          .post('/receipt')      
-          .reply(200);
+      describe('unsuccessful send', () => {
+        beforeEach(mochaAsync(async () => {
+          nock('https://example.com')
+            .log(console.log)
+            .post('/receipt')      
+            .reply(400);
+        }));
 
-        await expect(element(by.id('image-preview'))).toBeVisible();
-        await expect(element(by.id('camera'))).toBeNotVisible();
-        await element(by.id('send-button')).tap();
-        await expect(element(by.id('image-preview'))).toBeNotVisible();
-        await expect(element(by.id('camera'))).toBeVisible();
-      }));
-
-      it('shows a flash message on successful image submission', mochaAsync(async () => {
-        nock('https://example.com')
-          .log(console.log)
-          .post('/receipt')      
-          .reply(200);
-
-        await expect(element(by.text('Image sent'))).toBeNotVisible();
-        await element(by.id('send-button')).tap()
-        await expect(element(by.text('Image sent'))).toBeVisible();
-      }));
+        it('shows a flash message on failed image submission', mochaAsync(async () => {
+          await expect(element(by.text('Image could not be sent'))).toBeNotVisible();
+          await element(by.id('send-button')).tap()
+          await expect(element(by.text('Image could not be sent'))).toBeVisible();
+        }));
+      });
     });
   });
 });

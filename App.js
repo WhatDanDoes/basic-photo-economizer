@@ -14,12 +14,13 @@ import { RNCamera } from 'react-native-camera';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
-//const myIcon = <Icon name="rocket" size={30} color="#900" />;
 
+import FlashMessage from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
-type Props = {};
-export default class App extends Component<Props> {
-//export default class App extends Component {
+//type Props = {};
+//export default class App extends Component<Props> {
+export default class App extends Component {
 
   state = {
     image: null,
@@ -46,13 +47,31 @@ export default class App extends Component<Props> {
 
   async sendPicture() {
     await this.setState({ sending: true });
-    let results = await fetch('https://example.com/receipt', {
-      method: 'POST',
-      headers: { 'content-type': 'application/octet-stream' },
-      body: this.state.image.base64
-    });
-    console.log(results);
+//    let result = await fetch('https://example.com/receipt', {
+//      method: 'POST',
+//      headers: { 'content-type': 'application/octet-stream' },
+//      body: this.state.image.base64
+//    });
+
+    console.log('HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE');
+    let result = await fetch('https://example.com');
+    console.log(result);
     await this.setState({ sending: false, image: null });
+    if (result.status === 201) {
+      showMessage({
+        message: 'Image sent',
+        description: 'The image was successfully sent and received',
+        type: 'success',
+      });
+    }
+    else {
+      console.log('SHOWWING mesage');
+      showMessage({
+        message: 'Image could not be sent',
+        description: 'The image was not received',
+        type: 'warning',
+      });
+    }
   }
 
 
@@ -73,6 +92,7 @@ export default class App extends Component<Props> {
               </View> :
               null 
         }
+        <FlashMessage position='center' />
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           { this.state.image ? 
                 <View style={{flex: 0, flexDirection: 'row'}}>
