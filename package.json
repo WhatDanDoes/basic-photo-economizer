@@ -10,6 +10,7 @@
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-camera": "^2.11.0",
+    "react-native-flash-message": "^0.1.13",
     "react-native-vector-icons": "^6.5.0"
   },
   "devDependencies": {
@@ -20,7 +21,6 @@
     "jest": "24.8.0",
     "metro-react-native-babel-preset": "0.54.1",
     "mocha": "^6.1.4",
-    "nock": "^10.0.6",
     "react-test-renderer": "16.8.3"
   },
   "jest": {
