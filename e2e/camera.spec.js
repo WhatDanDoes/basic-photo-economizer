@@ -1,5 +1,4 @@
 describe('Example', () => {
-  const nock = require('nock');
 
   // 2019-6-25 https://labs.chiedo.com/post/async-mocha-tests/
   var mochaAsync = (fn) => {
@@ -109,13 +108,6 @@ describe('Example', () => {
       });
 
       describe('unsuccessful send', () => {
-        beforeEach(mochaAsync(async () => {
-          nock('https://example.com')
-            .log(console.log)
-            .post('/receipt')      
-            .reply(400);
-        }));
-
         it('shows a flash message on failed image submission', mochaAsync(async () => {
           await expect(element(by.text('Image could not be sent'))).toBeNotVisible();
           await element(by.id('send-button')).tap()
