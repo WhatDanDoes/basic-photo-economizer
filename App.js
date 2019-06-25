@@ -19,58 +19,67 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons';
 
 type Props = {};
 export default class App extends Component<Props> {
+//export default class App extends Component {
 
   state = {
     image: null,
     sending: false
   }
 
-  takePicture = async() => {
+  takePicture = this.takePicture.bind(this);
+  sendPicture = this.sendPicture.bind(this);
+  goBackToCamera = this.goBackToCamera.bind(this);
+
+
+  async takePicture() {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
-      console.log(Object.keys(data));
-      this.setState({ image: data });
+      await this.setState({ image: data });
     }
   }
 
-  showImage = () => (
-      <Image source={{
-        isStatic: true,
-        uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
-        style={{flex: 1, width: '100%' }} testID='image-preview' />
-  );
 
-  showCamera = () => (
-    <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
-  );
-
-  goBackToCamera = async() => {
-    this.setState({ image: null });
+  async goBackToCamera() {
+    await this.setState({ image: null });
   }
 
-  sendPicture = async() => {
-    this.setState({ sending: true });
+  async sendPicture() {
+    await this.setState({ sending: true });
+    let results = await fetch('https://example.com/receipt', {
+      method: 'POST',
+      headers: { 'content-type': 'application/octet-stream' },
+      body: this.state.image.base64
+    });
+    console.log(results);
+    await this.setState({ sending: false, image: null });
   }
 
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.image ? this.showImage() : this.showCamera()}
-        {this.state.sending ?
-          <View style={styles.overlay} testID='sending-message-overlay'>
-            <Text>HELLLOOOOO</Text>
-            <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
-          </View> : null 
+        { this.state.image ? 
+              <Image source={{
+                isStatic: true,
+                uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
+                style={{flex: 1, width: '100%' }} testID='image-preview' /> :
+              <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
+        }
+        { this.state.sending ?
+              <View style={styles.overlay} testID='sending-message-overlay'>
+                <Text>HELLLOOOOO</Text>
+                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+              </View> :
+              null 
         }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           { this.state.image ? 
-            <View style={{flex: 0, flexDirection: 'row'}}>
-              <EntypoIcon name='back' onPress={this.goBackToCamera.bind(this)} size={30} style={styles.button} testID='back-button' />
-              <FaIcon name='send-o' onPress={this.sendPicture.bind(this)} size={30} style={styles.button} testID='send-button' />
-            </View> :
-            <FaIcon name='circle-o' onPress={this.takePicture.bind(this)} size={30} style={styles.button} testID='take-picture-button' /> 
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
+                  <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
+                </View> :
+                <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
           }
         </View>
       </View>
