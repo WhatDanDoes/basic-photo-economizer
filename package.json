@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "detox": "RN_SRC_EXT=e2e.js detox test -c android.emu.debug"
   },
   "dependencies": {
     "react": "16.8.3",
