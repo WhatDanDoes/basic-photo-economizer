@@ -31,3 +31,8 @@ Wherever there's a build configured or a server running, this variable is set on
 RN_SRC_EXT=e2e.js react-native start --config rn-cli.config.js
 ```
 
+### Live Logging
+
+```
+react-native log-android
+```
