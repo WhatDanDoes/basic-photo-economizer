@@ -9,24 +9,30 @@ describe('Example', () => {
     };
   };
 
-  beforeEach(mochaAsync(async () => {
-    await device.reloadReactNative();
-  }));
+  describe('take-picture-button', () => {
+    beforeEach(mochaAsync(async () => {
+      await device.reloadReactNative();
+    }));
 
-  it('has a camera on the screen', mochaAsync(async () => {
-    await expect(element(by.id('camera'))).toBeVisible();
-  }));
-
-  it('has a take-picture-button button on screen', async () => {
-    await expect(element(by.id('take-picture-button'))).toBeVisible();
-  });
-
-  it('does not have a back-button on the screen', async () => {
-    await expect(element(by.id('back-button'))).toBeNotVisible();
+    it('has a camera on the screen', mochaAsync(async () => {
+      await expect(element(by.id('camera'))).toBeVisible();
+    }));
+  
+    it('has a take-picture-button button on screen', async () => {
+      await expect(element(by.id('take-picture-button'))).toBeVisible();
+    });
+  
+    it('does not have a back-button on the screen', async () => {
+      await expect(element(by.id('back-button'))).toBeNotVisible();
+    });
   });
 
 
   describe('take-picture-button', () => {
+    beforeEach(mochaAsync(async () => {
+      await device.reloadReactNative();
+    }));
+
     it('displays the image captured and hides the camera', mochaAsync(async () => {
       await expect(element(by.id('camera'))).toBeVisible();
       await element(by.id('take-picture-button')).tap();
@@ -50,6 +56,8 @@ describe('Example', () => {
 
     describe('back-button', () => {
       beforeEach(mochaAsync(async () => {
+        await device.reloadReactNative();
+
         await element(by.id('take-picture-button')).tap()
         await waitFor(element(by.id('back-button'))).toBeVisible().withTimeout(2000);
         await waitFor(element(by.id('image-preview'))).toBeVisible();
@@ -75,45 +83,6 @@ describe('Example', () => {
         await element(by.id('back-button')).tap();
         await expect(element(by.id('send-button'))).toBeNotVisible();
       }));
-    });
-
-    describe('send-button', () => {
-      beforeEach(mochaAsync(async () => {
-        await element(by.id('take-picture-button')).tap();
-        await waitFor(element(by.id('send-button'))).toBeVisible().withTimeout(2000);
-        await waitFor(element(by.id('image-preview'))).toBeVisible()
-      }));
-
-      describe('successful send', () => {
-
-        it('displays sending-message-modal', mochaAsync(async () => {
-          await expect(element(by.id('sending-message-overlay'))).toBeNotVisible();
-          await element(by.id('send-button')).tap();
-          await waitFor(element(by.id('sending-message-overlay'))).toBeVisible();
-        }));
-  
-        it('sends a POST to the designated API endpoint and returns to camera screen', mochaAsync(async () => {
-          await expect(element(by.id('image-preview'))).toBeVisible();
-          await expect(element(by.id('camera'))).toBeNotVisible();
-          await element(by.id('send-button')).tap();
-          await expect(element(by.id('image-preview'))).toBeNotVisible();
-          await expect(element(by.id('camera'))).toBeVisible();
-        }));
-  
-        it('shows a flash message on successful image submission', mochaAsync(async () => {
-          await expect(element(by.text('Image sent'))).toBeNotVisible();
-          await element(by.id('send-button')).tap()
-          await expect(element(by.text('Image sent'))).toBeVisible();
-        }));
-      });
-
-      describe('unsuccessful send', () => {
-        it('shows a flash message on failed image submission', mochaAsync(async () => {
-          await expect(element(by.text('Image could not be sent'))).toBeNotVisible();
-          await element(by.id('send-button')).tap()
-          await expect(element(by.text('Image could not be sent'))).toBeVisible();
-        }));
-      });
     });
   });
 });
