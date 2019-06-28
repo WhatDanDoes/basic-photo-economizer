@@ -51,6 +51,7 @@ describe('Example', () => {
       await expect(element(by.id('send-button'))).toBeNotVisible();
       await element(by.id('take-picture-button')).tap();
       await waitFor(element(by.id('send-button'))).toBeVisible();
+      // A constant reminder that I don't fully know what I'm doing
 //      await expect(element(by.id('send-button'))).toBeVisible();
     }));
 
