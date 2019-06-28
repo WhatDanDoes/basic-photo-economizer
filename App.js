@@ -18,6 +18,9 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import FlashMessage from 'react-native-flash-message';
 import { showMessage } from 'react-native-flash-message';
 
+import Api from './lib/Api';
+
+//const axios = require('axios');
 //type Props = {};
 //export default class App extends Component<Props> {
 export default class App extends Component {
@@ -47,31 +50,38 @@ export default class App extends Component {
 
   async sendPicture() {
     await this.setState({ sending: true });
-//    let result = await fetch('https://example.com/receipt', {
-//      method: 'POST',
-//      headers: { 'content-type': 'application/octet-stream' },
-//      body: this.state.image.base64
-//    });
 
-    console.log('HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE');
-    let result = await fetch('https://example.com');
-    console.log(result);
-    await this.setState({ sending: false, image: null });
-    if (result.status === 201) {
-      showMessage({
-        message: 'Image sent',
-        description: 'The image was successfully sent and received',
-        type: 'success',
-      });
+    try {
+      let result = await Api.postImage(this.state.image.base64);
+      console.log(result);
+
+      if (result.status === 201) {
+        showMessage({
+          message: 'Image sent',
+          description: 'The image was successfully sent and received',
+          type: 'success',
+        });
+      }
+      else {
+        showMessage({
+          message: 'Image could not be sent',
+          description: 'The image was not received',
+          type: 'warning',
+        });
+      }
     }
-    else {
-      console.log('SHOWWING mesage');
+    catch(err) {
+      console.error('SHOWWING ERROR');
+      console.error(err.message);
       showMessage({
-        message: 'Image could not be sent',
-        description: 'The image was not received',
+        message: err.message,
+        description: 'Serious unforseen error',
         type: 'warning',
       });
+
     }
+
+    await this.setState({ sending: false, image: null });
   }
 
 
