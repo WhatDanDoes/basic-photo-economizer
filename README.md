@@ -3,6 +3,7 @@ basic-photo-economizer
 
 React-Native app for cropping, compressing, and sending photos to a remote server. 
 
+My RN workspace setup is documented [here](https://libertyseeds.ca/2019/06/18/Basic-Android-React-Native-environment-setup-in-Ubuntu-18-04/). I initially set up this project to use `mocha`, but switched to `jest` when it was well underway. The transition was easy.
 
 ## Setup
 
