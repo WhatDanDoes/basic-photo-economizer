@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest",
+    "test": "./node_modules/.bin/jest __tests__",
     "detox": "RN_SRC_EXT=e2e.js detox test -c android.emu.debug"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-camera": "^2.11.0",
@@ -19,9 +20,14 @@
     "@babel/runtime": "7.4.5",
     "babel-jest": "24.8.0",
     "detox": "^12.11.1",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
     "jest": "24.8.0",
+    "jest-fetch-mock": "^2.1.2",
     "metro-react-native-babel-preset": "0.54.1",
     "mocha": "^6.1.4",
+    "moxios": "^0.4.0",
+    "react-dom": "^16.8.6",
     "react-test-renderer": "16.8.3"
   },
   "jest": {
@@ -31,7 +37,7 @@
     "configurations": {
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "build": "RN_SRC_EXT=e2e.js cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5_API_28"
       },
@@ -42,6 +48,6 @@
         "name": "Nexus_5_API_28"
       }
     },
-    "test-runner": "mocha"
+    "test-runner": "jest"
   }
 }
