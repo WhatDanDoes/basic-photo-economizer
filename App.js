@@ -53,8 +53,6 @@ export default class App extends Component {
 
     try {
       let result = await Api.postImage(this.state.image.base64);
-      console.log(result);
-
       if (result.status === 201) {
         showMessage({
           message: 'Image sent',
@@ -71,11 +69,9 @@ export default class App extends Component {
       }
     }
     catch(err) {
-      console.error('SHOWWING ERROR');
-      console.error(err.message);
       showMessage({
         message: err.message,
-        description: 'Serious unforseen error',
+        description: 'Serious unforeseen error',
         type: 'warning',
       });
 
@@ -102,7 +98,7 @@ export default class App extends Component {
               </View> :
               null 
         }
-        <FlashMessage position='center' />
+        <FlashMessage position='center' testID='flash-message' />
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           { this.state.image ? 
                 <View style={{flex: 0, flexDirection: 'row'}}>
