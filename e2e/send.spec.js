@@ -45,8 +45,6 @@ describe('Example', () => {
         await waitFor(element(by.text('Image sent'))).toBeNotVisible();
         await element(by.id('send-button')).tap()
         await waitFor(element(by.id('flash-message'))).toBeVisible()
-        console.log('\n\n\n\nWOOOOOOOOOOOOOOOOOORD!');
-        console.log(element(by.id('flash-message')));
         await expect(element(by.text('Image sent'))).toBeVisible();
       }));
     });
