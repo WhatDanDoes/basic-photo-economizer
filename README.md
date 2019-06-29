@@ -36,3 +36,49 @@ RN_SRC_EXT=e2e.js react-native start --config rn-cli.config.js
 ```
 react-native log-android
 ```
+
+## Keystore
+
+More notes from when I tried to do the release build and load onto my phone. Kept generating unsigned packages. Signing process discovered from here:
+
+- https://stackoverflow.com/questions/48017376/keystore-not-found-for-signing-config-release-react-native?rq=1
+- https://facebook.github.io/react-native/docs/signed-apk-android.html
+- https://github.com/facebook/react-native/issues/8980#issuecomment-376395718
+- https://github.com/facebook/react-native/issues/8980#issuecomment-276490204
+
+```
+cd android/app/
+keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Provide passwords as described in config below...
+
+Changed `buildType` in `android/app/build.gradle`:
+
+```
+    signingConfigs {
+      release {
+        storeFile file("my-release-key.keystore")
+        storePassword "beefalo"
+        keyAlias "my-key-alias"
+        keyPassword "beefalo"
+      }
+    }
+    buildTypes {
+        release {
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // 2019-2-28 https://github.com/facebook/react-native/issues/8980#issuecomment-276490204
+            signingConfig signingConfigs.release
+        }
+    }
+```
+
+## Install to Device
+
+```
+detox build -c android.emu.release
+adb -s 0ba1f22a02e3828e install android/app/build/outputs/apk/release/app-release.apk
+```
+
+
