@@ -8,6 +8,7 @@
     "detox": "RN_SRC_EXT=e2e.js detox test -c android.emu.debug"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.5.1",
     "axios": "^0.19.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
@@ -31,7 +32,8 @@
     "react-test-renderer": "16.8.3"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": ["./src/setupJest.js"]
   },
   "detox": {
     "configurations": {

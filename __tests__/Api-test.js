@@ -52,3 +52,4 @@ describe('postImage', () => {
     expect(request.config.method).toEqual('post');
   });
 });
+
