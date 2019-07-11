@@ -7,6 +7,20 @@ My RN workspace setup is documented [here](https://libertyseeds.ca/2019/06/18/Ba
 
 ## Setup
 
+Details can be found at the link above, but there are a lot of pieces that need to be in place before you can test or build.
+
+Start the emulator:
+
+```
+~/Android/Sdk/emulator/emulator -avd Nexus_5_API_28
+```
+
+Start the React Native server
+
+```
+npm start
+```
+
 ## Testing
 
 ```
@@ -30,6 +44,8 @@ Wherever there's a build configured or a server running, this variable is set on
 ```
 RN_SRC_EXT=e2e.js react-native start --config rn-cli.config.js
 ```
+
+This command is wrapped up in the `npm start` script in `package.json`.
 
 ### Live Logging
 
