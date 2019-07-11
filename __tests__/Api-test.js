@@ -48,7 +48,7 @@ describe('postImage', () => {
     expect(result.status).toEqual(201);
 
     let request = moxios.requests.mostRecent();
-    expect(request.url).toEqual('https://example.com/image');
+    expect(request.url).toEqual('https://localhost:3001/image');
     expect(request.config.method).toEqual('post');
   });
 });
