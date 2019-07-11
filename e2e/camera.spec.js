@@ -1,4 +1,4 @@
-describe('Example', () => {
+describe('camera', () => {
 
   // 2019-6-25 https://labs.chiedo.com/post/async-mocha-tests/
   var mochaAsync = (fn) => {
