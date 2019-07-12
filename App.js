@@ -20,15 +20,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Api from './lib/Api';
 import Login from './src/Login';
 
-//const axios = require('axios');
-//type Props = {};
-//export default class App extends Component<Props> {
 export default class App extends Component {
 
   state = {
     image: null,
     sending: false,
-    cookie: null,
+    cookie: null
   }
 
   takePicture = this.takePicture.bind(this);
@@ -36,14 +33,28 @@ export default class App extends Component {
   goBackToCamera = this.goBackToCamera.bind(this);
   setCookie = this.setCookie.bind(this);
 
+  async componentDidMount() {
+    try {
+      let cookie = await AsyncStorage.getItem('@cookie');
+      if (cookie) {
+        await this.setState({cookie: cookie});
+      }
+    } catch(err) {
+      showMessage({
+        message: err.message,
+        description: 'Error raised when accessing AsyncStorage',
+        type: 'warning',
+      });
+    }
+  }
+
   async takePicture() {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
+      const options = { quality: 0.5 };
       const data = await this.camera.takePictureAsync(options);
       await this.setState({ image: data });
     }
   }
-
 
   async goBackToCamera() {
     await this.setState({ image: null });
@@ -53,9 +64,7 @@ export default class App extends Component {
     await this.setState({ sending: true });
 
     try {
-      let result = await Api.postImage(this.state.image.base64);
-console.log('RESULT');
-console.log(result);
+      let result = await Api.postImage(this.state);
       if (result.status === 201) {
         showMessage({
           message: 'Image sent',
