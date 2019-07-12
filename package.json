@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.1",
     "axios": "^0.19.0",
+    "form-data": "^2.5.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-camera": "^2.11.0",
@@ -33,7 +34,9 @@
   },
   "jest": {
     "preset": "react-native",
-    "setupFiles": ["./src/setupJest.js"]
+    "setupFiles": [
+      "./src/setupJest.js"
+    ]
   },
   "detox": {
     "configurations": {
