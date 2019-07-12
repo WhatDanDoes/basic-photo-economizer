@@ -10,7 +10,7 @@ describe('authentication', () => {
   };
 
   describe('login form', () => {
-    beforeEach(mochaAsync(async () => {
+    beforeAll(mochaAsync(async () => {
       await device.reloadReactNative();
     }));
 
@@ -21,72 +21,79 @@ describe('authentication', () => {
       await expect(element(by.id('login-button'))).toBeVisible();
     }));
   
-//    it('has a take-picture-button button on screen', async () => {
-//      await expect(element(by.id('take-picture-button'))).toBeVisible();
-//    });
-//  
-//    it('does not have a back-button on the screen', async () => {
-//      await expect(element(by.id('back-button'))).toBeNotVisible();
-//    });
+    it('does not have a logout-button on the screen', async () => {
+      await expect(element(by.id('logout-button'))).toBeNotVisible();
+    });
   });
 
 
-//  describe('take-picture-button', () => {
-//    beforeEach(mochaAsync(async () => {
-//      await device.reloadReactNative();
+  describe('login-button', () => {
+    beforeEach(mochaAsync(async () => {
+      await device.reloadReactNative();
+    }));
+
+//    it('displays authentication-overlay', mochaAsync(async () => {
+//      await expect(element(by.id('authentication-overlay'))).toBeNotVisible();
+//      await element(by.id('email-input')).typeText('someguy@example.com');
+//      await element(by.id('password-input')).typeText('secret');
+//      element(by.id('login-button')).tap();
+//      expect(element(by.id('authentication-overlay'))).toBeVisible();
+//      //await waitFor(element(by.id('authentication-overlay'))).toBeVisible();
 //    }));
-//
-//    it('displays the image captured and hides the camera', mochaAsync(async () => {
-//      await expect(element(by.id('camera'))).toBeVisible();
-//      await element(by.id('take-picture-button')).tap();
-//      await expect(element(by.id('camera'))).toBeNotVisible();
-//      await expect(element(by.id('image-preview'))).toBeVisible();
-//    }));
-//
-//    it('shows the back-button and hides the take-picture-button', mochaAsync(async () => {
-//      await expect(element(by.id('back-button'))).toBeNotVisible();
-//      await element(by.id('take-picture-button')).tap();
-//      await expect(element(by.id('back-button'))).toBeVisible();
-//      await expect(element(by.id('take-picture-button'))).toBeNotVisible();
-//    }));
-//
-//    it('shows the send-button', mochaAsync(async () => {
-//      await expect(element(by.id('send-button'))).toBeNotVisible();
-//      await element(by.id('take-picture-button')).tap();
-//      await waitFor(element(by.id('send-button'))).toBeVisible();
-//      // A constant reminder that I don't fully know what I'm doing
-////      await expect(element(by.id('send-button'))).toBeVisible();
-//    }));
-//
-//    describe('back-button', () => {
-//      beforeEach(mochaAsync(async () => {
-//        await device.reloadReactNative();
-//
-//        await element(by.id('take-picture-button')).tap()
-//        await waitFor(element(by.id('back-button'))).toBeVisible().withTimeout(2000);
-//        await waitFor(element(by.id('image-preview'))).toBeVisible();
+
+    describe('success', () => {
+      beforeEach(mochaAsync(async () => {
+        await element(by.id('email-input')).typeText('someguy@example.com');
+        await element(by.id('password-input')).typeText('secret');
+      }));
+
+      it('does not display the login-form', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('login-form'))).toBeNotVisible();
+      }));
+
+      it('displays a welcome flash message', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await waitFor(element(by.id('flash-message'))).toBeVisible()
+        await expect(element(by.text('Hello, someguy@example.com!'))).toBeVisible();
+      }));
+
+      it('displays the camera and take-picture button', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await waitFor(element(by.id('camera'))).toBeVisible();
+        await expect(element(by.id('camera'))).toBeVisible();
+        await expect(element(by.id('take-picture-button'))).toBeVisible();
+      }));
+    });
+
+    describe('failure', () => {
+      beforeEach(mochaAsync(async () => {
+        await element(by.id('email-input')).typeText('someguy@example.com');
+        await element(by.id('password-input')).typeText('wrong');
+      }));
+
+      it('displays the login-form', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('login-form'))).toBeVisible();
+      }));
+
+      it('does not display the camera or take-picture-button', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('camera'))).toBeNotVisible();
+        await expect(element(by.id('take-picture-button'))).toBeNotVisible();
+      }));
+
+      it('displays an error message', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await waitFor(element(by.id('flash-message'))).toBeVisible()
+        await expect(element(by.text('Invalid email or password'))).toBeVisible();
+      }));
+
+//      it('keeps the email field filled', mochaAsync(async () => {
+//        await element(by.id('login-button')).tap();
+//        await expect(element(by.id('email-input'))).toHaveValue('someguy@example.com');
+//        await expect(element(by.id('password-input'))).toHaveValue('');
 //      }));
-//
-//      it('shows the take-picture-button and hides the back-button', mochaAsync(async () => {
-//        await expect(element(by.id('take-picture-button'))).toBeNotVisible();
-//        await element(by.id('back-button')).tap();
-//        await waitFor(element(by.id('back-button'))).toBeNotVisible();
-//        await expect(element(by.id('take-picture-button'))).toBeVisible();
-//      }));
-//
-//      it('shows the camera and hides the image-preview', mochaAsync(async () => {
-//        await expect(element(by.id('image-preview'))).toBeVisible();
-//        await expect(element(by.id('camera'))).toBeNotVisible();
-//        await element(by.id('back-button')).tap();
-//        await waitFor(element(by.id('image-preview'))).toBeNotVisible();
-//        await expect(element(by.id('camera'))).toBeVisible();
-//      }));
-//
-//      it('hides the send-button', mochaAsync(async () => {
-//        await expect(element(by.id('send-button'))).toBeVisible();
-//        await element(by.id('back-button')).tap();
-//        await expect(element(by.id('send-button'))).toBeNotVisible();
-//      }));
-//    });
-//  });
+    });
+  });
 });
