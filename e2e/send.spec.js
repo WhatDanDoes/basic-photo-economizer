@@ -18,6 +18,11 @@ describe('send', () => {
   describe('send-button', () => {
     beforeAll(mochaAsync(async () => {
       await device.reloadReactNative();
+
+      // Login
+      await element(by.id('email-input')).typeText('someguy@example.com');
+      await element(by.id('password-input')).typeText('secret');
+      await element(by.id('login-button')).tap();
     }));
 
     describe('successful send', () => {

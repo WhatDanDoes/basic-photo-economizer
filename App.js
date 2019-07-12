@@ -54,6 +54,8 @@ export default class App extends Component {
 
     try {
       let result = await Api.postImage(this.state.image.base64);
+console.log('RESULT');
+console.log(result);
       if (result.status === 201) {
         showMessage({
           message: 'Image sent',
@@ -80,16 +82,16 @@ export default class App extends Component {
     await this.setState({ sending: false, image: null });
   }
 
-  getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@cookie')
-      if(value !== null) {
-        // value previously stored
-      }
-    } catch(e) {
-      // error reading value
-    }
-  }
+//  getData = async () => {
+//    try {
+//      const value = await AsyncStorage.getItem('@cookie')
+//      if(value !== null) {
+//        // value previously stored
+//      }
+//    } catch(e) {
+//      // error reading value
+//    }
+//  }
 
   async setCookie(cookie) {
     try {
