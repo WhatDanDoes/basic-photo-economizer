@@ -27,13 +27,14 @@ export default class App extends Component {
 
   state = {
     image: null,
-    sending: false
+    sending: false,
+    cookie: null,
   }
 
   takePicture = this.takePicture.bind(this);
   sendPicture = this.sendPicture.bind(this);
   goBackToCamera = this.goBackToCamera.bind(this);
-
+  setCookie = this.setCookie.bind(this);
 
   async takePicture() {
     if (this.camera) {
@@ -74,7 +75,6 @@ export default class App extends Component {
         description: 'Serious unforeseen error',
         type: 'warning',
       });
-
     }
 
     await this.setState({ sending: false, image: null });
@@ -91,13 +91,92 @@ export default class App extends Component {
     }
   }
 
+  async setCookie(cookie) {
+    try {
+      await AsyncStorage.setItem('@cookie', cookie);
+      await this.setState({ cookie: cookie });
+    } catch (error) {
+      console.error('BIIIIIIIIG ERROR');
+      console.error(error);
+      // saving error
+      showMessage({
+        message: error.message,
+        description: 'Catastrophic failure trying to save cookie',
+        type: 'warning',
+      });
+    }
+  }
+
   render() {
     return (
-        <Login />
-
+      <View style={styles.container}>
+        { !this.state.image && this.state.cookie ?
+            <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
+          :
+          <Login notify={this.setCookie} />
+        }
+        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
+          { this.state.image ? 
+                <Image source={{
+                  isStatic: true,
+                  uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
+                  style={{flex: 1, width: '100%' }} testID='image-preview' />
+                : null
+          }
+          { this.state.image && this.state.cookie ? 
+                <View style={{flex: 0, flexDirection: 'row'}}>
+                  <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
+                  <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
+                </View>
+                : null
+          }
+          { !this.state.image && this.state.cookie ? 
+                <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
+                : null
+          }
+        </View>
+        <FlashMessage position='top' testID='flash-message' />
+      </View>
     );
   }
 }
+//      <View style={styles.container}>
+//        <Login notify={this.setCookie} />
+//
+//        <FlashMessage position='top' testID='flash-message' />
+//      </View>
+
+//      <View style={styles.container}>
+//        { this.state.cookie ?
+//          <View style={styles.container}>
+//            { this.state.image ? 
+//                  <Image source={{
+//                    isStatic: true,
+//                    uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
+//                    style={{flex: 1, width: '100%' }} testID='image-preview' /> :
+//                  <RNCamera testID='camera' style={{ flex: 1, width: '100%' }} />
+//            }
+//            { this.state.sending ?
+//                  <View style={styles.overlay} testID='sending-message-overlay'>
+//                    <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+//                  </View> :
+//                  null 
+//            }
+//            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
+//              { this.state.image ? 
+//                    <View style={{flex: 0, flexDirection: 'row'}}>
+//                      <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
+//                      <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
+//                    </View> :
+//                    <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
+//              }
+//            </View>
+//          </View> :
+//          <Login notify={this.setCookie} />
+//        }
+//
+//        <FlashMessage position='top' testID='flash-message' />
+//      </View>
 
 //      <View style={styles.container}>
 //        { this.state.image ? 
@@ -137,18 +216,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-  capture: {
-    flex: 0,
-    backgroundColor: '#cdcdcd',
-    borderRadius: 90,
-    borderStyle: 'solid',
-    borderWidth: 5,
-    borderColor: '#fff',
-    padding: 15,
-    paddingHorizontal: 15,
-    alignSelf: 'center',
-    margin: 10,
-  },
+//  capture: {
+//    flex: 0,
+//    backgroundColor: '#cdcdcd',
+//    borderRadius: 90,
+//    borderStyle: 'solid',
+//    borderWidth: 5,
+//    borderColor: '#fff',
+//    padding: 15,
+//    paddingHorizontal: 15,
+//    alignSelf: 'center',
+//    margin: 10,
+//  },
   overlay: {
     position: 'absolute',
     top: 0,
