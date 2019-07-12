@@ -10,7 +10,6 @@ import {StyleSheet, Text, TextInput, View, TouchableOpacity} from 'react-native'
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 
-//import FlashMessage from 'react-native-flash-message';
 import { showMessage } from 'react-native-flash-message';
 
 import Api from '../lib/Api';
@@ -26,30 +25,24 @@ export default class Login extends Component {
     };
   }
 
-//  storeCookie = async (cookieStr) => {
-//    try {
-//      await AsyncStorage.setItem('@cookie', cookieStr)
-//    } catch (e) {
-//      // saving error
-//    }
-//  }
-
   login = async () => {
+console.log('AT THE API LOGIN');
     await this.setState({ authenticating: true });
     let result = await Api.login({ email: this.state.email, password: this.state.password });
+console.log('RESULT');
+console.log(result);
     try {
       if (result.status === 201) {
-//        await AsyncStorage.setItem('@cookie', result.headers['Set-Cookie']);
         showMessage({
-          message: result.message,
+          message: result.data.message,
           description: 'Login successful',
           type: 'success',
         });
-        this.props.notify(result.headers['Set-Cookie']);
+        this.props.notify(result.data.cookie);
       }
       else {
         showMessage({
-          message: result.message,
+          message: result.data.message,
           description: 'Login unsuccessful',
           type: 'warning',
         });
@@ -59,7 +52,7 @@ export default class Login extends Component {
       console.error(error);
       // saving error
       showMessage({
-        message: error.message,
+        message: error.data.message,
         description: 'Catastrophic failure trying to save cookie',
         type: 'warning',
       });
