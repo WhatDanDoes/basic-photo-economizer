@@ -40,7 +40,7 @@ describe('postImage', () => {
   it('sends a properly formatted API call', async () => {
     let result;
     try {
-      result = await Api.postImage('somelongbase64imagestring');
+      result = await Api.postImage({ image: { uri: 'file:///path/to/image.jpg' }, cookie: 'cookie=delicious' });
     }
     catch (err) {
       throw err;
@@ -50,6 +50,9 @@ describe('postImage', () => {
     let request = moxios.requests.mostRecent();
     expect(request.url).toEqual('https://localhost:3001/image');
     expect(request.config.method).toEqual('post');
+    expect(request.headers['Accept']).toMatch(/json/);
+    expect(request.headers['Cookie']).toBeDefined();
+    expect(request.headers['Content-Type']).toEqual('multipart/form-data');
   });
 });
 
@@ -79,7 +82,6 @@ describe('login', () => {
     expect(result.status).toEqual(201);
 
     let request = moxios.requests.mostRecent();
-    console.log(request.config);
     expect(request.url).toEqual('https://localhost:3001/login');
     expect(request.config.method).toEqual('post');
     let credentials = JSON.parse(request.config.data);
