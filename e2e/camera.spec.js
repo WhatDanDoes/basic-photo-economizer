@@ -10,8 +10,17 @@ describe('camera', () => {
   };
 
   describe('take-picture-button', () => {
-    beforeEach(mochaAsync(async () => {
+    beforeAll(mochaAsync(async () => {
       await device.reloadReactNative();
+      // Login
+      await element(by.id('email-input')).typeText('someguy@example.com');
+      await element(by.id('password-input')).typeText('secret');
+      await element(by.id('login-button')).tap();
+    }));
+
+
+    beforeEach(mochaAsync(async () => {
+      await device.launchApp();
     }));
 
     it('has a camera on the screen', mochaAsync(async () => {
@@ -29,8 +38,22 @@ describe('camera', () => {
 
 
   describe('take-picture-button', () => {
+//    beforeAll(mochaAsync(async () => {
+//      await device.reloadReactNative();
+//      // Login
+//      await element(by.id('email-input')).typeText('someguy@example.com');
+//      await element(by.id('password-input')).typeText('secret');
+//      await element(by.id('login-button')).tap();
+//    }));
+
     beforeEach(mochaAsync(async () => {
+//      await device.launchApp();
       await device.reloadReactNative();
+      // Login
+      await element(by.id('email-input')).typeText('someguy@example.com');
+      await element(by.id('password-input')).typeText('secret');
+      await element(by.id('login-button')).tap();
+
     }));
 
     it('displays the image captured and hides the camera', mochaAsync(async () => {
@@ -58,6 +81,11 @@ describe('camera', () => {
     describe('back-button', () => {
       beforeEach(mochaAsync(async () => {
         await device.reloadReactNative();
+
+        // Login
+        await element(by.id('email-input')).typeText('someguy@example.com');
+        await element(by.id('password-input')).typeText('secret');
+        await element(by.id('login-button')).tap();
 
         await element(by.id('take-picture-button')).tap()
         await waitFor(element(by.id('back-button'))).toBeVisible().withTimeout(2000);
