@@ -21,6 +21,7 @@
     "@babel/core": "7.4.5",
     "@babel/runtime": "7.4.5",
     "babel-jest": "24.8.0",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "detox": "^12.11.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
