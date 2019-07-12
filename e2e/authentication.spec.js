@@ -43,6 +43,7 @@ describe('authentication', () => {
 
     describe('success', () => {
       beforeEach(mochaAsync(async () => {
+        await device.launchApp({ delete: true });
         await element(by.id('email-input')).typeText('someguy@example.com');
         await element(by.id('password-input')).typeText('secret');
       }));
@@ -68,6 +69,7 @@ describe('authentication', () => {
 
     describe('failure', () => {
       beforeEach(mochaAsync(async () => {
+        await device.launchApp({ delete: true });
         await element(by.id('email-input')).typeText('someguy@example.com');
         await element(by.id('password-input')).typeText('wrong');
       }));
