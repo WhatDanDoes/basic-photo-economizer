@@ -84,8 +84,8 @@ export default class App extends Component {
       if (err.response) {
         if (err.response.status === 401) {
           showMessage({
-            message: err.response.data.message,
-            description: 'Unauthorized',
+            message: err.message,
+            description: err.response.data.message,
             type: 'warning',
           });
           // 2019-712 Can I test this with Enzyme?
@@ -93,8 +93,8 @@ export default class App extends Component {
         }
         else {
           showMessage({
-            message: err.response.data.message,
-            description: 'Serious unforeseen error',
+            message: err.message,
+            description: err.response.data.message,
             type: 'warning',
           });
         }
@@ -102,7 +102,7 @@ export default class App extends Component {
       else {
         showMessage({
           message: err.message,
-          description: 'Probably internal error',
+          description: err.response && err.response.data ? err.response.data.message : '',
           type: 'warning',
         });
       }
@@ -112,6 +112,8 @@ export default class App extends Component {
   }
 
   async setCookie(cookie) {
+console.log('COOKIE')
+console.log(cookie)
     try {
       await AsyncStorage.setItem('@cookie', cookie);
       await this.setState({ cookie: cookie });
