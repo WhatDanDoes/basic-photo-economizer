@@ -9,16 +9,35 @@ My RN workspace setup is documented [here](https://libertyseeds.ca/2019/06/18/Ba
 
 Details can be found at the link above, but there are a lot of pieces that need to be in place before you can test or build.
 
+This is usually running in the background:
+
+```
+adb start-server
+```
+
 Start the emulator:
 
 ```
 ~/Android/Sdk/emulator/emulator -avd Nexus_5_API_28
 ```
 
-Start the React Native server
+Start the React Native server for e2e testing:
 
 ```
 npm start
+```
+
+Or, start for development testings:
+
+```
+cd project-dir/
+DOMAIN=http://192.168.2.6:3001 react-native run-android
+```
+
+View logs:
+
+```
+react-native log-android
 ```
 
 ## Testing
@@ -88,6 +107,14 @@ Changed `buildType` in `android/app/build.gradle`:
             signingConfig signingConfigs.release
         }
     }
+```
+
+## Emulator Build
+
+Build with `DOMAIN` for testing from the emulator
+
+```
+DOMAIN=http://192.168.2.6:3001 detox build -c android.emu.debug
 ```
 
 ## Install to Device
