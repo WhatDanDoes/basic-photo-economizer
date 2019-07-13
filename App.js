@@ -112,8 +112,6 @@ export default class App extends Component {
   }
 
   async setCookie(cookie) {
-console.log('COOKIE')
-console.log(cookie)
     try {
       await AsyncStorage.setItem('@cookie', cookie);
       await this.setState({ cookie: cookie });
