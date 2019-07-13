@@ -119,8 +119,16 @@ DOMAIN=http://192.168.2.6:3001 detox build -c android.emu.debug
 
 ## Install to Device
 
+Plug in an find your device:
+
 ```
-detox build -c android.emu.release
+adb devices
+```
+
+Build and install
+
+```
+DOMAIN=https://example.com detox build -c android.emu.release
 adb -s 0ba1f22a02e3828e install android/app/build/outputs/apk/release/app-release.apk
 ```
 
