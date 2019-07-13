@@ -37,7 +37,7 @@ export default class App extends Component {
     try {
       let cookie = await AsyncStorage.getItem('@cookie');
       if (cookie) {
-        await this.setState({cookie: cookie});
+        await this.setState({cookie: cookie, image: null});
       }
     } catch(err) {
       showMessage({
@@ -81,34 +81,41 @@ export default class App extends Component {
       }
     }
     catch(err) {
-      showMessage({
-        message: err.message,
-        description: 'Serious unforeseen error',
-        type: 'warning',
-      });
+      if (err.response) {
+        if (err.response.status === 401) {
+          showMessage({
+            message: err.response.data.message,
+            description: 'Unauthorized',
+            type: 'warning',
+          });
+          // 2019-712 Can I test this with Enzyme?
+          await this.setState({ cookie: null });
+        }
+        else {
+          showMessage({
+            message: err.response.data.message,
+            description: 'Serious unforeseen error',
+            type: 'warning',
+          });
+        }
+      }
+      else {
+        showMessage({
+          message: err.message,
+          description: 'Probably internal error',
+          type: 'warning',
+        });
+      }
     }
 
     await this.setState({ sending: false, image: null });
   }
-
-//  getData = async () => {
-//    try {
-//      const value = await AsyncStorage.getItem('@cookie')
-//      if(value !== null) {
-//        // value previously stored
-//      }
-//    } catch(e) {
-//      // error reading value
-//    }
-//  }
 
   async setCookie(cookie) {
     try {
       await AsyncStorage.setItem('@cookie', cookie);
       await this.setState({ cookie: cookie });
     } catch (error) {
-      console.error('BIIIIIIIIG ERROR');
-      console.error(error);
       // saving error
       showMessage({
         message: error.message,
@@ -121,29 +128,32 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
+        { !this.state.cookie ?
+            <Login notify={this.setCookie} /> 
+          : null
+        }
         { !this.state.image && this.state.cookie ?
             <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
-          :
-          <Login notify={this.setCookie} />
+          : null
+        }
+        { this.state.image && this.state.cookie ? 
+            <Image source={{
+              isStatic: true,
+              uri: this.state.image.uri }}
+              style={{flex: 1, width: '100%' }} testID='image-preview' />
+          : null
         }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
-          { this.state.image ? 
-                <Image source={{
-                  isStatic: true,
-                  uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
-                  style={{flex: 1, width: '100%' }} testID='image-preview' />
-                : null
-          }
           { this.state.image && this.state.cookie ? 
-                <View style={{flex: 0, flexDirection: 'row'}}>
-                  <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
-                  <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
-                </View>
-                : null
+              <View style={{flex: 0, flexDirection: 'row'}}>
+                <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
+                <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
+              </View>
+            : null
           }
           { !this.state.image && this.state.cookie ? 
-                <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
-                : null
+              <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
+            : null
           }
         </View>
         <FlashMessage position='top' testID='flash-message' />
@@ -151,70 +161,6 @@ export default class App extends Component {
     );
   }
 }
-//      <View style={styles.container}>
-//        <Login notify={this.setCookie} />
-//
-//        <FlashMessage position='top' testID='flash-message' />
-//      </View>
-
-//      <View style={styles.container}>
-//        { this.state.cookie ?
-//          <View style={styles.container}>
-//            { this.state.image ? 
-//                  <Image source={{
-//                    isStatic: true,
-//                    uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
-//                    style={{flex: 1, width: '100%' }} testID='image-preview' /> :
-//                  <RNCamera testID='camera' style={{ flex: 1, width: '100%' }} />
-//            }
-//            { this.state.sending ?
-//                  <View style={styles.overlay} testID='sending-message-overlay'>
-//                    <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
-//                  </View> :
-//                  null 
-//            }
-//            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
-//              { this.state.image ? 
-//                    <View style={{flex: 0, flexDirection: 'row'}}>
-//                      <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
-//                      <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
-//                    </View> :
-//                    <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
-//              }
-//            </View>
-//          </View> :
-//          <Login notify={this.setCookie} />
-//        }
-//
-//        <FlashMessage position='top' testID='flash-message' />
-//      </View>
-
-//      <View style={styles.container}>
-//        { this.state.image ? 
-//              <Image source={{
-//                isStatic: true,
-//                uri: 'data:image/jpeg;base64,'+this.state.image.base64 }}
-//                style={{flex: 1, width: '100%' }} testID='image-preview' /> :
-//              <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
-//        }
-//        { this.state.sending ?
-//              <View style={styles.overlay} testID='sending-message-overlay'>
-//                <Text>HELLLOOOOO</Text>
-//                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
-//              </View> :
-//              null 
-//        }
-//        <FlashMessage position='center' testID='flash-message' />
-//        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
-//          { this.state.image ? 
-//                <View style={{flex: 0, flexDirection: 'row'}}>
-//                  <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
-//                  <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
-//                </View> :
-//                <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
-//          }
-//        </View>
-//      </View>
 
 const styles = StyleSheet.create({
   button: {
