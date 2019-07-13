@@ -26,11 +26,8 @@ export default class Login extends Component {
   }
 
   login = async () => {
-console.log('AT THE API LOGIN');
     await this.setState({ authenticating: true });
     let result = await Api.login({ email: this.state.email, password: this.state.password });
-console.log('RESULT');
-console.log(result);
     try {
       if (result.status === 201) {
         showMessage({
@@ -48,8 +45,6 @@ console.log(result);
         });
       }
     } catch (error) {
-      console.error('BIIIIIIIIG ERROR');
-      console.error(error);
       // saving error
       showMessage({
         message: error.data.message,
