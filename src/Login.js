@@ -27,8 +27,8 @@ export default class Login extends Component {
 
   login = async () => {
     await this.setState({ authenticating: true });
-    let result = await Api.login({ email: this.state.email, password: this.state.password });
     try {
+      let result = await Api.login({ email: this.state.email, password: this.state.password });
       if (result.status === 201) {
         showMessage({
           message: result.data.message,
@@ -41,15 +41,15 @@ export default class Login extends Component {
         showMessage({
           message: result.data.message,
           description: 'Login unsuccessful',
-          type: 'warning',
+          type: 'info',
         });
       }
     } catch (error) {
       // saving error
       showMessage({
-        message: error.data.message,
+        message: error.response.data.message,
         description: 'Catastrophic failure trying to save cookie',
-        type: 'warning',
+        type: 'danger',
       });
     }
 
