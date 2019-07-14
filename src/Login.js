@@ -35,7 +35,7 @@ export default class Login extends Component {
           description: 'Login successful',
           type: 'success',
         });
-        this.props.notify(result.data.cookie);
+        this.props.notify(result.data.token);
       }
       else {
         showMessage({
@@ -48,7 +48,7 @@ export default class Login extends Component {
       // saving error
       showMessage({
         message: error.response.data.message,
-        description: 'Catastrophic failure trying to save cookie',
+        description: 'Catastrophic failure trying to save token',
         type: 'danger',
       });
     }

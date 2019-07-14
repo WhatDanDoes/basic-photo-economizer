@@ -25,19 +25,19 @@ export default class App extends Component {
   state = {
     image: null,
     sending: false,
-    cookie: null
+    token: null
   }
 
   takePicture = this.takePicture.bind(this);
   sendPicture = this.sendPicture.bind(this);
   goBackToCamera = this.goBackToCamera.bind(this);
-  setCookie = this.setCookie.bind(this);
+  setToken = this.setToken.bind(this);
 
   async componentDidMount() {
     try {
-      let cookie = await AsyncStorage.getItem('@cookie');
-      if (cookie) {
-        await this.setState({cookie: cookie, image: null});
+      let token = await AsyncStorage.getItem('@token');
+      if (token) {
+        await this.setState({token: token, image: null});
       }
     } catch(err) {
       showMessage({
@@ -89,7 +89,7 @@ export default class App extends Component {
             type: 'warning',
           });
           // 2019-712 Can I test this with Enzyme?
-          await this.setState({ cookie: null });
+          await this.setState({ token: null });
         }
         else {
           showMessage({
@@ -111,15 +111,15 @@ export default class App extends Component {
     await this.setState({ sending: false, image: null });
   }
 
-  async setCookie(cookie) {
+  async setToken(token) {
     try {
-      await AsyncStorage.setItem('@cookie', cookie);
-      await this.setState({ cookie: cookie });
+      await AsyncStorage.setItem('@token', token);
+      await this.setState({ token: token });
     } catch (error) {
       // saving error
       showMessage({
         message: error.message,
-        description: 'Catastrophic failure trying to save cookie',
+        description: 'Catastrophic failure trying to save token',
         type: 'warning',
       });
     }
@@ -128,15 +128,15 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        { !this.state.cookie ?
-            <Login notify={this.setCookie} /> 
+        { !this.state.token ?
+            <Login notify={this.setToken} /> 
           : null
         }
-        { !this.state.image && this.state.cookie ?
+        { !this.state.image && this.state.token ?
             <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
           : null
         }
-        { this.state.image && this.state.cookie ? 
+        { this.state.image && this.state.token ? 
             <Image source={{
               isStatic: true,
               uri: this.state.image.uri }}
@@ -144,14 +144,14 @@ export default class App extends Component {
           : null
         }
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
-          { this.state.image && this.state.cookie ? 
+          { this.state.image && this.state.token ? 
               <View style={{flex: 0, flexDirection: 'row'}}>
                 <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
                 <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
               </View>
             : null
           }
-          { !this.state.image && this.state.cookie ? 
+          { !this.state.image && this.state.token ? 
               <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
             : null
           }
