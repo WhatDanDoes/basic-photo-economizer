@@ -41,7 +41,7 @@ export default class Login extends Component {
         showMessage({
           message: result.data.message,
           description: 'Login unsuccessful',
-          type: 'info',
+          type: 'warning',
         });
       }
     } catch (error) {

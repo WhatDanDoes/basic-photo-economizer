@@ -65,6 +65,21 @@ describe('authentication', () => {
         await expect(element(by.id('camera'))).toBeVisible();
         await expect(element(by.id('take-picture-button'))).toBeVisible();
       }));
+
+      it('has a logout-button on the screen', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('logout-button'))).toBeVisible();
+      }));
+
+      describe('logout-button', () => {
+        it('shows the login screen and displays a farewell message', mochaAsync(async () => {
+          await element(by.id('login-button')).tap();
+          await expect(element(by.id('logout-button'))).toBeVisible();
+          await element(by.id('logout-button')).tap();
+          await expect(element(by.id('login-form'))).toBeVisible();
+          await expect(element(by.text('Cheerio!'))).toBeVisible();
+        }));
+      });
     });
 
     describe('failure', () => {
@@ -91,6 +106,11 @@ describe('authentication', () => {
         await expect(element(by.text('Invalid email or password'))).toBeVisible();
       }));
 
+      it('does not have a logout-button on the screen', async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('logout-button'))).toBeNotVisible();
+      });
+
 //      it('keeps the email field filled', mochaAsync(async () => {
 //        await element(by.id('login-button')).tap();
 //        await expect(element(by.id('email-input'))).toHaveValue('someguy@example.com');
@@ -98,4 +118,41 @@ describe('authentication', () => {
 //      }));
     });
   });
+
+  /**
+   * Ensure the app is still logged in on app wake-up.
+   * If not, display the login screen.
+   * Very touchy... tests are order dependent
+   */
+
+  describe('authentication status check', () => {
+    beforeAll(mochaAsync(async () => {
+      await device.reloadReactNative();
+      await element(by.id('email-input')).typeText('someguy@example.com');
+      await element(by.id('password-input')).typeText('secret');
+      await element(by.id('login-button')).tap();
+    }));
+
+    beforeEach(mochaAsync(async () => {
+      await device.sendToHome();
+      await device.launchApp({newInstance: false});
+    }));
+
+    it('shows the camera when token is successfully refreshed', mochaAsync(async () => {
+      await element(by.id('login-button')).tap();
+      await waitFor(element(by.id('camera'))).toBeVisible();
+      await expect(element(by.id('camera'))).toBeVisible();
+      await expect(element(by.id('take-picture-button'))).toBeVisible();
+    }));
+  
+    it('shows the login screen when token is not successfully refreshed', mochaAsync(async () => {
+      await expect(element(by.id('login-form'))).toBeVisible();
+    }));
+
+    it('shows the login screen when token refresh throws an error', mochaAsync(async () => {
+      await expect(element(by.id('login-form'))).toBeVisible();
+    }));
+  });
 });
+
+

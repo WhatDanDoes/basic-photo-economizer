@@ -19,7 +19,7 @@ import moxios from 'moxios';
 
 it('doesn\'t bomb', () => {
   expect(Api).toBeDefined();
-  expect(Object.keys(Api).length).toEqual(2);
+  expect(Object.keys(Api).length).toEqual(3);
 });
  
 describe('postImage', () => {

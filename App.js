@@ -4,13 +4,14 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableHighlight, Image} from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
 
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import FlashMessage from 'react-native-flash-message';
 import { showMessage } from 'react-native-flash-message';
@@ -32,6 +33,7 @@ export default class App extends Component {
   sendPicture = this.sendPicture.bind(this);
   goBackToCamera = this.goBackToCamera.bind(this);
   setToken = this.setToken.bind(this);
+  logout = this.logout.bind(this);
 
   async componentDidMount() {
     try {
@@ -125,6 +127,24 @@ export default class App extends Component {
     }
   }
 
+  async logout() {
+    try {
+      await AsyncStorage.removeItem('@token');
+      await this.setState({ token: null });
+      showMessage({
+        message: 'Cheerio!',
+        type: 'success',
+      });
+    } catch (error) {
+      // token removal error
+      showMessage({
+        message: error.message,
+        description: 'Catastrophic failure trying to erase token',
+        type: 'warning',
+      });
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -152,7 +172,16 @@ export default class App extends Component {
             : null
           }
           { !this.state.image && this.state.token ? 
-              <FaIcon name='circle-o' onPress={this.takePicture} size={30} style={styles.button} testID='take-picture-button' /> 
+              <View style={{flex: 1, flexDirection: 'row', backgroundColor: '#000'}}>
+                <View style={[styles.bottomAbsolute, {flex: 1, flexDirection: 'row', justifyContent: 'center'}]}>
+                  <EvilIcon name='camera' onPress={this.takePicture} size={40} style={[styles.button]} testID='take-picture-button' /> 
+                </View>
+                <View style={[{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}]}>
+                  <TouchableHighlight onPress={this.logout}> 
+                    <AntDesignIcon name='logout' size={25} style={[styles.button]} testID='logout-button' /> 
+                  </TouchableHighlight>
+                </View>
+              </View>
             : null
           }
         </View>
@@ -163,6 +192,12 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
+  bottomAbsolute: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   button: {
     color: '#fff',
     margin: 10
