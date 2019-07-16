@@ -94,4 +94,38 @@ describe('login', () => {
   });
 });
 
+describe('refresh token', () => {
+  beforeEach(() => {
+    moxios.install()
+
+    moxios.stubRequest(/.*/, {
+      status: 201,
+      responseText: 'hello'
+    });
+  });
+
+  afterEach(() => {
+    moxios.uninstall()
+  });
+
+  it('sends a properly formatted API call', async () => {
+    let result;
+    try {
+      result = await Api.refreshAuth('somejwtthing');
+    }
+    catch (err) {
+      throw err;
+    }
+    expect(result.status).toEqual(201);
+
+    let request = moxios.requests.mostRecent();
+    expect(request.url).toEqual('https://localhost:3001/login/refresh');
+    expect(request.config.method).toEqual('post');
+    let credentials = JSON.parse(request.config.data);
+    expect(credentials.token).toEqual('somejwtthing');
+    expect(request.config.headers['Accept']).toMatch(/json/);
+    expect(request.config.headers['Content-Type']).toMatch(/json/);
+  });
+});
+
 
