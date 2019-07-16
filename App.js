@@ -4,7 +4,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableHighlight, Image} from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, AppState} from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
 
@@ -26,7 +26,8 @@ export default class App extends Component {
   state = {
     image: null,
     sending: false,
-    token: null
+    token: null,
+    appState: AppState.currentState,
   }
 
   takePicture = this.takePicture.bind(this);
@@ -36,6 +37,7 @@ export default class App extends Component {
   logout = this.logout.bind(this);
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
     try {
       let token = await AsyncStorage.getItem('@token');
       if (token) {
@@ -49,6 +51,46 @@ export default class App extends Component {
       });
     }
   }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = async (nextAppState) => {
+    const token = await AsyncStorage.getItem('@token');
+    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active' && token) {
+    if (nextAppState === 'active' && token) {
+      try {
+        let result = await Api.refreshAuth(token);
+        if (result.status === 201) {
+          showMessage({
+            message: result.data.message,
+            type: 'success',
+          });
+          await this.setState({ token: result.data.token });
+        }
+        else {
+          showMessage({
+            message: result.data.message,
+            description: 'Login again',
+            type: 'warning',
+          });
+          await this.setState({ token: null });
+        }
+      } catch (error) {
+        showMessage({
+          message: error.message,
+          description: 'Catastrophic failure trying to refresh token',
+          type: 'danger',
+        });
+        await this.setState({ token: null });
+      };
+    }
+    else {
+      await this.setState({ token: null });
+    }
+    await this.setState({ appState: nextAppState });
+  };
 
   async takePicture() {
     if (this.camera) {
@@ -166,15 +208,21 @@ export default class App extends Component {
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }}>
           { this.state.image && this.state.token ? 
               <View style={{flex: 0, flexDirection: 'row'}}>
-                <EntypoIcon name='back' onPress={this.goBackToCamera} size={30} style={styles.button} testID='back-button' />
-                <FaIcon name='send-o' onPress={this.sendPicture} size={30} style={styles.button} testID='send-button' />
+                <TouchableHighlight onPress={this.goBackToCamera} underlayColor="#00f"> 
+                  <EntypoIcon name='back' size={30} style={styles.button} testID='back-button' />
+                </TouchableHighlight>
+                <TouchableHighlight onPress={this.sendPicture}> 
+                  <FaIcon name='send-o' size={30} style={styles.button} testID='send-button' />
+                </TouchableHighlight>
               </View>
             : null
           }
           { !this.state.image && this.state.token ? 
               <View style={{flex: 1, flexDirection: 'row', backgroundColor: '#000'}}>
                 <View style={[styles.bottomAbsolute, {flex: 1, flexDirection: 'row', justifyContent: 'center'}]}>
-                  <EvilIcon name='camera' onPress={this.takePicture} size={40} style={[styles.button]} testID='take-picture-button' /> 
+                  <TouchableHighlight onPress={this.takePicture} underlayColor="#00f"> 
+                    <EvilIcon name='camera' size={40} style={[styles.button]} testID='take-picture-button' /> 
+                  </TouchableHighlight>
                 </View>
                 <View style={[{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}]}>
                   <TouchableHighlight onPress={this.logout}> 

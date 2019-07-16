@@ -96,8 +96,7 @@ describe('authentication', () => {
 
       it('does not display the camera or take-picture-button', mochaAsync(async () => {
         await element(by.id('login-button')).tap();
-        await expect(element(by.id('camera'))).toBeNotVisible();
-        await expect(element(by.id('take-picture-button'))).toBeNotVisible();
+        await expect(element(by.id('camera'))).toBeNotVisible(); await expect(element(by.id('take-picture-button'))).toBeNotVisible();
       }));
 
       it('displays an error message', mochaAsync(async () => {
@@ -125,12 +124,16 @@ describe('authentication', () => {
    * Very touchy... tests are order dependent
    */
 
-  describe('authentication status check', () => {
+  describe('token status check', () => {
     beforeAll(mochaAsync(async () => {
       await device.reloadReactNative();
+
+      await waitFor(element(by.id('login-form'))).toBeVisible();
+      await waitFor(element(by.id('email-input'))).toBeVisible();
       await element(by.id('email-input')).typeText('someguy@example.com');
       await element(by.id('password-input')).typeText('secret');
       await element(by.id('login-button')).tap();
+      await waitFor(element(by.id('camera'))).toBeVisible();
     }));
 
     beforeEach(mochaAsync(async () => {
@@ -139,8 +142,6 @@ describe('authentication', () => {
     }));
 
     it('shows the camera when token is successfully refreshed', mochaAsync(async () => {
-      await element(by.id('login-button')).tap();
-      await waitFor(element(by.id('camera'))).toBeVisible();
       await expect(element(by.id('camera'))).toBeVisible();
       await expect(element(by.id('take-picture-button'))).toBeVisible();
     }));

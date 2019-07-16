@@ -20,7 +20,7 @@ describe('camera', () => {
   describe('take-picture-button', () => {
  
     beforeEach(mochaAsync(async () => {
-      await device.launchApp();
+      await device.launchApp({ newInstance: true });
     }));
 
     it('has a camera on the screen', mochaAsync(async () => {
