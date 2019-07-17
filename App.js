@@ -1,7 +1,5 @@
 /**
- * basic-photo-enconomizer
- * https://github.com/WhatDanDoes/basic-photo-economizer
- */
+ * basic-photo-enconomizer * https://github.com/WhatDanDoes/basic-photo-economizer */
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, AppState} from 'react-native';
@@ -106,6 +104,7 @@ export default class App extends Component {
 
   async sendPicture() {
     await this.setState({ sending: true });
+console.log(this.state);
 
     try {
       let result = await Api.postImage(this.state);
@@ -163,7 +162,7 @@ export default class App extends Component {
       // saving error
       showMessage({
         message: error.message,
-        description: 'Catastrophic failure trying to save token',
+        description: 'Catastrophic failure trying to set token',
         type: 'warning',
       });
     }
@@ -190,6 +189,12 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
+        { this.state.sending ?
+              <View style={styles.overlay} testID='sending-overlay'>
+                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+              </View> :
+              null 
+        }
         { !this.state.token ?
             <Login notify={this.setToken} /> 
           : null
@@ -211,7 +216,7 @@ export default class App extends Component {
                 <TouchableHighlight onPress={this.goBackToCamera} underlayColor="#00f"> 
                   <EntypoIcon name='back' size={30} style={styles.button} testID='back-button' />
                 </TouchableHighlight>
-                <TouchableHighlight onPress={this.sendPicture}> 
+                <TouchableHighlight onPress={this.sendPicture} underlayColor="#00f"> 
                   <FaIcon name='send-o' size={30} style={styles.button} testID='send-button' />
                 </TouchableHighlight>
               </View>
@@ -225,7 +230,7 @@ export default class App extends Component {
                   </TouchableHighlight>
                 </View>
                 <View style={[{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}]}>
-                  <TouchableHighlight onPress={this.logout}> 
+                  <TouchableHighlight onPress={this.logout} underlayColor="#00f"> 
                     <AntDesignIcon name='logout' size={25} style={[styles.button]} testID='logout-button' /> 
                   </TouchableHighlight>
                 </View>
@@ -234,6 +239,7 @@ export default class App extends Component {
           }
         </View>
         <FlashMessage position='top' testID='flash-message' />
+
       </View>
     );
   }
