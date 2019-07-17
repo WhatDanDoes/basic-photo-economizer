@@ -33,9 +33,9 @@ describe('send', () => {
       }));
 
       it('displays sending-message-modal', mochaAsync(async () => {
-        await expect(element(by.id('sending-message-overlay'))).toBeNotVisible();
+        await expect(element(by.id('sending-overlay'))).toBeNotVisible();
         await element(by.id('send-button')).tap();
-        await waitFor(element(by.id('sending-message-overlay'))).toBeVisible();
+        await expect(element(by.id('sending-overlay'))).toBeVisible();
       }));
 
       it('sends a POST to the designated API endpoint and returns to camera screen', mochaAsync(async () => {
