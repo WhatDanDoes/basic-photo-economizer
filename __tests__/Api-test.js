@@ -84,7 +84,7 @@ describe('login', () => {
     expect(result.status).toEqual(201);
 
     let request = moxios.requests.mostRecent();
-    expect(request.url).toEqual('https://localhost:3001/login');
+    expect(request.url).toEqual('https://localhost:3001/login/api');
     expect(request.config.method).toEqual('post');
     let credentials = JSON.parse(request.config.data);
     expect(credentials.email).toEqual('someguy@example.com');
