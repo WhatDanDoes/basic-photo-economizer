@@ -200,7 +200,7 @@ console.log(this.state);
           : null
         }
         { !this.state.image && this.state.token ?
-            <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} testID='camera' />
+            <RNCamera ref={ref => { this.camera = ref; }} style={{ flex: 1, width: '100%', }} captureAudio={false} testID='camera' />
           : null
         }
         { this.state.image && this.state.token ? 
