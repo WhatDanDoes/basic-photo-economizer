@@ -23,6 +23,13 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <!-- 2019-7-22 https://hackernoon.com/react-native-deep-linking-for-ios-and-android-d33abfba7ef3 -->
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="bpe" />
+        </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>

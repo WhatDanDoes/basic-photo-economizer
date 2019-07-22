@@ -2,7 +2,7 @@
  * basic-photo-enconomizer * https://github.com/WhatDanDoes/basic-photo-economizer */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, AppState} from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, AppState, Linking} from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
 
@@ -18,6 +18,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import Api from './lib/Api';
 import Login from './src/Login';
+
+const PREFIX = 'bpe://';
 
 export default class App extends Component {
 
@@ -35,11 +37,21 @@ export default class App extends Component {
   logout = this.logout.bind(this);
 
   async componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
+console.log('MOUNTING');
+
+//    AppState.addEventListener('change', this._handleAppStateChange);
     try {
-      let token = await AsyncStorage.getItem('@token');
+      let url = await Linking.getInitialURL();
+      let token;
+      if (url) {
+        token = url.replace(PREFIX, '');
+      }
+      if (!token) {
+        token = await AsyncStorage.getItem('@token');
+      }
       if (token) {
-        await this.setState({token: token, image: null});
+        await this.setToken(token);
+        await this.setState({image: null});
       }
     } catch(err) {
       showMessage({
@@ -50,45 +62,45 @@ export default class App extends Component {
     }
   }
 
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
+//  componentWillUnmount() {
+//    AppState.removeEventListener('change', this._handleAppStateChange);
+//  }
 
-  _handleAppStateChange = async (nextAppState) => {
-    const token = await AsyncStorage.getItem('@token');
-    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active' && token) {
-    if (nextAppState === 'active' && token) {
-      try {
-        let result = await Api.refreshAuth(token);
-        if (result.status === 201) {
-          showMessage({
-            message: result.data.message,
-            type: 'success',
-          });
-          await this.setState({ token: result.data.token });
-        }
-        else {
-          showMessage({
-            message: result.data.message,
-            description: 'Login again',
-            type: 'warning',
-          });
-          await this.setState({ token: null });
-        }
-      } catch (error) {
-        showMessage({
-          message: error.message,
-          description: 'Catastrophic failure trying to refresh token',
-          type: 'danger',
-        });
-        await this.setState({ token: null });
-      };
-    }
-    else {
-      await this.setState({ token: null });
-    }
-    await this.setState({ appState: nextAppState });
-  };
+//  _handleAppStateChange = async (nextAppState) => {
+//    const token = await AsyncStorage.getItem('@token');
+//    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active' && token) {
+//    if (nextAppState === 'active' && token) {
+//      try {
+//        let result = await Api.refreshAuth(token);
+//        if (result.status === 201) {
+//          showMessage({
+//            message: result.data.message,
+//            type: 'success',
+//          });
+//          await this.setState({ token: result.data.token });
+//        }
+//        else {
+//          showMessage({
+//            message: result.data.message,
+//            description: 'Login again',
+//            type: 'warning',
+//          });
+//          await this.setState({ token: null });
+//        }
+//      } catch (error) {
+//        showMessage({
+//          message: error.message,
+//          description: 'Catastrophic failure trying to refresh token',
+//          type: 'danger',
+//        });
+//        await this.setState({ token: null });
+//      };
+//    }
+//    else {
+//      await this.setState({ token: null });
+//    }
+//    await this.setState({ appState: nextAppState });
+//  };
 
   async takePicture() {
     if (this.camera) {
@@ -104,7 +116,6 @@ export default class App extends Component {
 
   async sendPicture() {
     await this.setState({ sending: true });
-console.log(this.state);
 
     try {
       let result = await Api.postImage(this.state);
