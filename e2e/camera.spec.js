@@ -42,6 +42,17 @@ describe('camera', () => {
       await device.launchApp({ newInstance: true });
     }));
 
+    /**
+     * 2019-7-22 I have zero confidence this is actually testing the modal
+     * The `waitFor` doesn't really seem to wait for anything
+     */
+    it('displays sending-message-modal', mochaAsync(async () => {
+      await expect(element(by.id('sending-overlay'))).toBeNotVisible();
+      await element(by.id('take-picture-button')).tap();
+      await waitFor(element(by.id('sending-overlay'))).toBeVisible();
+    }));
+
+
     it('displays the image captured and hides the camera', mochaAsync(async () => {
       await expect(element(by.id('camera'))).toBeVisible();
       await element(by.id('take-picture-button')).tap();

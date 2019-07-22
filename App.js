@@ -2,7 +2,7 @@
  * basic-photo-enconomizer * https://github.com/WhatDanDoes/basic-photo-economizer */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, AppState, Linking} from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableHighlight, Image, /* AppState, */ Linking} from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
 
@@ -27,7 +27,7 @@ export default class App extends Component {
     image: null,
     sending: false,
     token: null,
-    appState: AppState.currentState,
+//    appState: AppState.currentState,
   }
 
   takePicture = this.takePicture.bind(this);
@@ -37,8 +37,6 @@ export default class App extends Component {
   logout = this.logout.bind(this);
 
   async componentDidMount() {
-console.log('MOUNTING');
-
 //    AppState.addEventListener('change', this._handleAppStateChange);
     try {
       let url = await Linking.getInitialURL();
@@ -104,9 +102,10 @@ console.log('MOUNTING');
 
   async takePicture() {
     if (this.camera) {
+      await this.setState({ sending: true });
       const options = { quality: 0.5 };
       const data = await this.camera.takePictureAsync(options);
-      await this.setState({ image: data });
+      await this.setState({ image: data, sending: false });
     }
   }
 
@@ -200,12 +199,6 @@ console.log('MOUNTING');
   render() {
     return (
       <View style={styles.container}>
-        { this.state.sending ?
-              <View style={styles.overlay} testID='sending-overlay'>
-                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
-              </View> :
-              null 
-        }
         { !this.state.token ?
             <Login notify={this.setToken} /> 
           : null
@@ -250,7 +243,12 @@ console.log('MOUNTING');
           }
         </View>
         <FlashMessage position='top' testID='flash-message' />
-
+        { this.state.sending ?
+              <View style={styles.overlay} testID='sending-overlay'>
+                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+              </View> :
+              null 
+        }
       </View>
     );
   }
@@ -273,18 +271,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-//  capture: {
-//    flex: 0,
-//    backgroundColor: '#cdcdcd',
-//    borderRadius: 90,
-//    borderStyle: 'solid',
-//    borderWidth: 5,
-//    borderColor: '#fff',
-//    padding: 15,
-//    paddingHorizontal: 15,
-//    alignSelf: 'center',
-//    margin: 10,
-//  },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -292,6 +278,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     backgroundColor: 'red',
-    opacity: 0.3
+    opacity: 0.3,
+    zIndex: 1
   },
 });
