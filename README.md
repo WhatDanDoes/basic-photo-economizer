@@ -15,6 +15,12 @@ This is usually running in the background:
 adb start-server
 ```
 
+Build the project:
+
+```
+detox build -c android.emu.debug
+```
+
 Start the emulator:
 
 ```
