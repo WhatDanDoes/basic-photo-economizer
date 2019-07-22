@@ -10,6 +10,7 @@ import FaIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import FlashMessage from 'react-native-flash-message';
 import { showMessage } from 'react-native-flash-message';
@@ -35,6 +36,7 @@ export default class App extends Component {
   goBackToCamera = this.goBackToCamera.bind(this);
   setToken = this.setToken.bind(this);
   logout = this.logout.bind(this);
+  openWebApp = this.openWebApp.bind(this);
 
   async componentDidMount() {
 //    AppState.addEventListener('change', this._handleAppStateChange);
@@ -196,6 +198,10 @@ export default class App extends Component {
     }
   }
 
+  async openWebApp() {
+    await Linking.openURL(`${process.env.DOMAIN}/image`);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -228,14 +234,19 @@ export default class App extends Component {
           }
           { !this.state.image && this.state.token ? 
               <View style={{flex: 1, flexDirection: 'row', backgroundColor: '#000'}}>
+                <View style={[{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}]}>
+                  <TouchableHighlight onPress={this.logout} underlayColor="#00f"> 
+                    <AntDesignIcon name='logout' size={25} style={[styles.button]} testID='logout-button' /> 
+                  </TouchableHighlight>
+                </View>
                 <View style={[styles.bottomAbsolute, {flex: 1, flexDirection: 'row', justifyContent: 'center'}]}>
                   <TouchableHighlight onPress={this.takePicture} underlayColor="#00f"> 
                     <EvilIcon name='camera' size={40} style={[styles.button]} testID='take-picture-button' /> 
                   </TouchableHighlight>
                 </View>
                 <View style={[{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}]}>
-                  <TouchableHighlight onPress={this.logout} underlayColor="#00f"> 
-                    <AntDesignIcon name='logout' size={25} style={[styles.button]} testID='logout-button' /> 
+                  <TouchableHighlight onPress={this.openWebApp} underlayColor="#00f"> 
+                    <MaterialCommunityIcons name='web' size={25} style={[styles.button]} testID='web-link-button' /> 
                   </TouchableHighlight>
                 </View>
               </View>

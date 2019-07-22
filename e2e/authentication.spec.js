@@ -71,6 +71,12 @@ describe('authentication', () => {
         await expect(element(by.id('logout-button'))).toBeVisible();
       }));
 
+      it('has a web-link on the screen', mochaAsync(async () => {
+        await element(by.id('login-button')).tap();
+        await expect(element(by.id('web-link-button'))).toBeVisible();
+      }));
+
+
       describe('logout-button', () => {
         it('shows the login screen and displays a farewell message', mochaAsync(async () => {
           await element(by.id('login-button')).tap();
