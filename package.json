@@ -14,7 +14,8 @@
     "react-native": "^0.59.9",
     "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
     "react-native-flash-message": "^0.1.13",
-    "react-native-vector-icons": "^6.5.0"
+    "react-native-vector-icons": "^6.5.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "@babel/core": "7.4.5",

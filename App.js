@@ -18,17 +18,17 @@ import { showMessage } from 'react-native-flash-message';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import Api from './lib/Api';
-import Login from './src/Login';
 
-const PREFIX = 'bpe://';
+import url from 'url';
 
 export default class App extends Component {
 
   state = {
+    authenticating: true,
     image: null,
     sending: false,
     token: null,
-//    appState: AppState.currentState,
+    domain: null
   }
 
   takePicture = this.takePicture.bind(this);
@@ -39,68 +39,35 @@ export default class App extends Component {
   openWebApp = this.openWebApp.bind(this);
 
   async componentDidMount() {
-//    AppState.addEventListener('change', this._handleAppStateChange);
     try {
-      let url = await Linking.getInitialURL();
-      let token;
-      if (url) {
-        token = url.replace(PREFIX, '');
-      }
-      if (!token) {
-        token = await AsyncStorage.getItem('@token');
-      }
-      if (token) {
-        await this.setToken(token);
-        await this.setState({image: null});
+      let deepLink = await Linking.getInitialURL();
+      if (deepLink) {
+        deepLink = url.parse(deepLink, true);
+        if (deepLink.query && deepLink.query.token && deepLink.query.domain) {
+          await this.setToken(deepLink.query.token);
+          await this.setState({image: null, domain: deepLink.query.domain});
+
+          showMessage({
+            message: 'Posting to ' + deepLink.query.domain,
+            type: 'success',
+          });
+        }
+        else {
+          showMessage({
+            message: 'Authentication failed. Login through the web app',
+            type: 'warning',
+          });
+        }
       }
     } catch(err) {
       showMessage({
         message: err.message,
-        description: 'Error raised when accessing AsyncStorage',
+        description: 'Error raised when parsing deep link',
         type: 'warning',
       });
     }
+    await this.setState({authenticating: false});
   }
-
-//  componentWillUnmount() {
-//    AppState.removeEventListener('change', this._handleAppStateChange);
-//  }
-
-//  _handleAppStateChange = async (nextAppState) => {
-//    const token = await AsyncStorage.getItem('@token');
-//    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active' && token) {
-//    if (nextAppState === 'active' && token) {
-//      try {
-//        let result = await Api.refreshAuth(token);
-//        if (result.status === 201) {
-//          showMessage({
-//            message: result.data.message,
-//            type: 'success',
-//          });
-//          await this.setState({ token: result.data.token });
-//        }
-//        else {
-//          showMessage({
-//            message: result.data.message,
-//            description: 'Login again',
-//            type: 'warning',
-//          });
-//          await this.setState({ token: null });
-//        }
-//      } catch (error) {
-//        showMessage({
-//          message: error.message,
-//          description: 'Catastrophic failure trying to refresh token',
-//          type: 'danger',
-//        });
-//        await this.setState({ token: null });
-//      };
-//    }
-//    else {
-//      await this.setState({ token: null });
-//    }
-//    await this.setState({ appState: nextAppState });
-//  };
 
   async takePicture() {
     if (this.camera) {
@@ -199,14 +166,14 @@ export default class App extends Component {
   }
 
   async openWebApp() {
-    await Linking.openURL(`${process.env.DOMAIN}/image`);
+    await Linking.openURL(`${this.state.domain}/image`);
   }
 
   render() {
     return (
       <View style={styles.container}>
         { !this.state.token ?
-            <Login notify={this.setToken} /> 
+            <Text testID='login-message' style={{ color: 'white' }}>Authenticate through a dependent web application</Text>
           : null
         }
         { !this.state.image && this.state.token ?
@@ -260,6 +227,13 @@ export default class App extends Component {
               </View> :
               null 
         }
+        { this.state.authenticating ?
+              <View style={styles.overlay} testID='authentication-overlay'>
+                <EvilIcon name='spinner-3' style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor: '#000' }} size={30} />
+              </View> :
+              null 
+        }
+
       </View>
     );
   }

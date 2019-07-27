@@ -8,6 +8,7 @@ describe('send', () => {
       });
     };
   };
+  const URL = `bpe://bpe?token=somejwtstring\\&domain=${encodeURIComponent('https://example.com')}`;
 
   /**
    * This is super experimental. I need to provide pre-cooked responses, so I
@@ -18,11 +19,8 @@ describe('send', () => {
   describe('send-button', () => {
     beforeAll(mochaAsync(async () => {
       await device.reloadReactNative();
-
       // Login
-      await element(by.id('email-input')).typeText('someguy@example.com');
-      await element(by.id('password-input')).typeText('secret');
-      await element(by.id('login-button')).tap();
+      await device.launchApp({ url: URL, newInstance: true });
     }));
 
     describe('successful send', () => {

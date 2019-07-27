@@ -9,37 +9,29 @@ describe('camera', () => {
     };
   };
 
- beforeAll(mochaAsync(async () => {
+  const URL = `bpe://bpe?token=somejwtstring\\&domain=${encodeURIComponent('https://example.com')}`;
+  beforeAll(mochaAsync(async () => {
     await device.reloadReactNative();
     // Login
-    await element(by.id('email-input')).typeText('someguy@example.com');
-    await element(by.id('password-input')).typeText('secret');
-    await element(by.id('login-button')).tap();
+    await device.launchApp({ url: URL, newInstance: true });
   }));
 
-  describe('take-picture-button', () => {
- 
-    beforeEach(mochaAsync(async () => {
-      await device.launchApp({ newInstance: true });
-    }));
+  it('has a camera on the screen', mochaAsync(async () => {
+    await expect(element(by.id('camera'))).toBeVisible();
+  }));
 
-    it('has a camera on the screen', mochaAsync(async () => {
-      await expect(element(by.id('camera'))).toBeVisible();
-    }));
-  
-    it('has a take-picture-button button on screen', async () => {
-      await expect(element(by.id('take-picture-button'))).toBeVisible();
-    });
-  
-    it('does not have a back-button on the screen', async () => {
-      await expect(element(by.id('back-button'))).toBeNotVisible();
-    });
+  it('has a take-picture-button button on screen', async () => {
+    await expect(element(by.id('take-picture-button'))).toBeVisible();
+  });
+
+  it('does not have a back-button on the screen', async () => {
+    await expect(element(by.id('back-button'))).toBeNotVisible();
   });
 
 
   describe('take-picture-button', () => {
     beforeEach(mochaAsync(async () => {
-      await device.launchApp({ newInstance: true });
+      await device.launchApp({ url: URL, newInstance: true });
     }));
 
     /**
@@ -77,8 +69,7 @@ describe('camera', () => {
 
     describe('back-button', () => {
       beforeEach(mochaAsync(async () => {
-        await device.launchApp({ newInstance: true });
-
+        await device.launchApp({ url: URL, newInstance: true });
         await element(by.id('take-picture-button')).tap()
         await waitFor(element(by.id('back-button'))).toBeVisible().withTimeout(2000);
         await waitFor(element(by.id('image-preview'))).toBeVisible();
