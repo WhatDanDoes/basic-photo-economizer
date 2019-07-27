@@ -37,7 +37,7 @@ Or, start for development testings:
 
 ```
 cd project-dir/
-DOMAIN=http://192.168.2.6:3001 react-native run-android
+react-native run-android
 ```
 
 View logs:
@@ -120,7 +120,7 @@ Changed `buildType` in `android/app/build.gradle`:
 Build with `DOMAIN` for testing from the emulator
 
 ```
-DOMAIN=http://192.168.2.6:3001 detox build -c android.emu.debug
+detox build -c android.emu.debug
 ```
 
 ## Install to Device
@@ -134,7 +134,7 @@ adb devices
 Build and install
 
 ```
-DOMAIN=https://example.com detox build -c android.emu.release
+detox build -c android.emu.release
 adb -s 0ba1f22a02e3828e install android/app/build/outputs/apk/release/app-release.apk
 ```
 
