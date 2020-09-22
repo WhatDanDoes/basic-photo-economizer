@@ -5,7 +5,7 @@
   "scripts": {
     "start": "RN_SRC_EXT=e2e.js react-native start --config rn-cli.config.js",
     "test": "./node_modules/.bin/jest __tests__",
-    "detox": "RN_SRC_EXT=e2e.js detox test -c android.emu.debug"
+    "detox": "RN_SRC_EXT=e2e.js npx detox test -c android.emu.debug"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.1",
@@ -23,7 +23,7 @@
     "@jest/reporters": "^26.4.1",
     "babel-jest": "24.8.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "detox": "^12.11.1",
+    "detox": "^17.5.8",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "jest": "24.8.0",
