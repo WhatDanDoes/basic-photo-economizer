@@ -65,7 +65,7 @@ npm run detox
 To run a single test, use the `-f` flag and specify the file:
 
 ```
-RN_SRC_EXT=e2e.js detox test -c android.emu.debug -f e2e/lib/api.spec.js
+RN_SRC_EXT=e2e.js npx detox test -c android.emu.debug -f e2e/lib/api.spec.js
 ```
 
 ### Notes on Mocks
@@ -84,8 +84,16 @@ This command is wrapped up in the `npm start` script in `package.json`.
 
 ### Live Logging
 
+To see debug output:
+
 ```
 react-native log-android
+```
+
+To see emulator output:
+
+```
+adb logcat
 ```
 
 ## Keystore
