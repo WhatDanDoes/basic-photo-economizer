@@ -5,9 +5,19 @@ React-Native app for resizing and sending photos to a remote server.
 
 My RN workspace setup is documented [here](https://libertyseeds.ca/2019/06/18/Basic-Android-React-Native-environment-setup-in-Ubuntu-18-04/). I initially set up this project to use `mocha`, but switched to `jest` when it was well underway. The transition was easy.
 
+_2020-9-21_ The emulator kept freezing my Ubuntu 18.04 installation. I discovered that this was due to a dependence on proprietary drivers. In addition to the steps taken at the site listed above, I also executed:
+
+```
+sudo ubuntu-drivers autoinstall
+```
+
 ## Setup
 
 Details can be found at the link above, but there are a lot of pieces that need to be in place before you can test or build.
+
+```
+npm install
+```
 
 This is usually running in the background:
 
