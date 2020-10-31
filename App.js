@@ -72,7 +72,7 @@ export default class App extends Component {
   async takePicture() {
     if (this.camera) {
       await this.setState({ sending: true });
-      const options = { quality: 0.5 };
+      const options = { quality: 0.5, fixOrientation: true };
       const data = await this.camera.takePictureAsync(options);
       await this.setState({ image: data, sending: false });
     }
