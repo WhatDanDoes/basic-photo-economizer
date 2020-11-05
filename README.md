@@ -48,6 +48,7 @@ Or, start for development testings:
 ```
 cd project-dir/
 react-native run-android
+react-native start
 ```
 
 View logs:
